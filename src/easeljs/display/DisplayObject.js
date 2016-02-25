@@ -806,10 +806,9 @@ this.createjs = this.createjs||{};
 					// flag so render textures aren't used
 					this._webGLCache.isCacheControlled = true;
 				} else {
-					this.cacheCanvas = webGL.getRenderBufferTexture(width, height);										//TODO: DHG: use this texture better
+					this.cacheCanvas = true;
 					this._webGLCache = webGL;
 				}
-				this._webGLCache.vocalDebug = true;
 			}
 		} else {
 			if(!this.cacheCanvas || this._webGLCache) {
@@ -848,8 +847,6 @@ this.createjs = this.createjs||{};
 	 * whatwg spec on compositing</a>.
 	 **/
 	p.updateCache = function(compositeOperation) {
-		//TODO: this does not do anything for WebGL canvases ATM
-		//*
 		var cacheCanvas = this.cacheCanvas;
 		var webGL = this._webGLCache;
 		if (!cacheCanvas) { throw "cache() must be called before updateCache()"; }
@@ -863,8 +860,6 @@ this.createjs = this.createjs||{};
 		var w = this._cacheWidth, h = this._cacheHeight;
 		w = Math.ceil(w*scale) + fBounds.width;
 		h = Math.ceil(h*scale) + fBounds.height;
-
-		cacheCanvas._invalid = true;
 
 		if (webGL) {
 			if (webGL.isCacheControlled) {
@@ -892,9 +887,12 @@ this.createjs = this.createjs||{};
 			ctx.restore();
 			if (this.filters && this.filters.length) {
 				var master = createjs.MasterFilter.get(canvas);
-				master.applyFilters(this);																//TODO: DHG: had grander plans for master, probably should remove the current master though
+				master.applyFilters(this);																				//TODO: DHG: had grander plans for master, probably should remove the current master though
 			}
 		}
+
+		// the actual cacheCanvas element could of changed during the cache process of a webGL texture
+		this.cacheCanvas._invalid = true;
 		this.cacheID = DisplayObject._nextCacheID++;
 	};
 
@@ -903,6 +901,12 @@ this.createjs = this.createjs||{};
 	 * @method uncache
 	 **/
 	p.uncache = function() {
+		if(this._webGLCache) {
+			if(!this._webGLCache.isCacheControlled) {
+				this._webGLCache.unregisterTexture(this.cacheCanvas);
+			}
+			this._webGLCache = false;
+		}
 		this._cacheDataURL = this.cacheCanvas = null;
 		this.cacheID = this._cacheOffsetX = this._cacheOffsetY = this._filterOffsetX = this._filterOffsetY = 0;
 		this._cacheScale = 1;
