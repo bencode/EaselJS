@@ -150,7 +150,7 @@ this.createjs = this.createjs||{};
 		this.alpha = 1;
 
 		/**
-		 * If a cache is active, this returns the canvas that holds the cached version of this display object. See {{#crossLink "cache"}}{{/crossLink}}
+		 * If a cache is active, this returns the canvas that holds the cached version of this display object. See {{#crossLink "DisplayObject/cache:method"}}{{/crossLink}}
 		 * for more information.
 		 * @property cacheCanvas
 		 * @type {HTMLCanvasElement | Object}
@@ -160,23 +160,14 @@ this.createjs = this.createjs||{};
 		this.cacheCanvas = null;
 
 		/**
-		 * If a cache is active, this returns the canvas that holds the cached version of this display object. See {{#crossLink "cache"}}{{/crossLink}}
+		 * If a cache has been made, this returns the class that is managing the cacheCanvas and its properties. See {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * for more information.
-		 * @property cacheCanvas
-		 * @type {HTMLCanvasElement | Object}
+		 * @property bitmapCache
+		 * @type {BitmapCache}
 		 * @default null
 		 * @readonly
 		 **/
 		this.bitmapCache = null;
-
-		/**
-		 * Returns an ID number that uniquely identifies the current cache for this display object. This can be used to
-		 * determine if the cache has changed since a previous check.
-		 * @property cacheID
-		 * @type {Number}
-		 * @default 0
-		 */
-		this.cacheID = 0;
 
 		/**
 		 * Unique ID for this display object. Makes display objects easier for some uses.
@@ -402,9 +393,20 @@ this.createjs = this.createjs||{};
 		 */
 		this.cursor = null;
 
+		/**
+		 * Returns an ID number that uniquely identifies the current cache for this display object. This can be used to
+		 * determine if the cache has changed since a previous check.
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
+		 * @property cacheID
+		 * @deprecated
+		 * @type {Number}
+		 * @default 0
+		 */
+
 
 	// private properties:
 		/**
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * @property _cacheOffsetX
 		 * @protected
 		 * @type {Number}
@@ -413,6 +415,7 @@ this.createjs = this.createjs||{};
 		 **/
 
 		/**
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * @property _cacheOffsetY
 		 * @protected
 		 * @type {Number}
@@ -421,6 +424,7 @@ this.createjs = this.createjs||{};
 		 **/
 
 		/**
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * @property _filterOffsetX
 		 * @protected
 		 * @type {Number}
@@ -429,6 +433,7 @@ this.createjs = this.createjs||{};
 		 **/
 
 		/**
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * @property _filterOffsetY
 		 * @protected
 		 * @type {Number}
@@ -437,6 +442,7 @@ this.createjs = this.createjs||{};
 		 **/
 
 		/**
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * @property _cacheScale
 		 * @protected
 		 * @type {Number}
@@ -445,6 +451,7 @@ this.createjs = this.createjs||{};
 		 **/
 
 		/**
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * @property _cacheDataURLID
 		 * @protected
 		 * @type {Number}
@@ -453,6 +460,7 @@ this.createjs = this.createjs||{};
 		 */
 
 		/**
+		 * Moved to {{#crossLink "BitmapCache"}}{{/crossLink}}
 		 * @property _cacheDataURL
 		 * @protected
 		 * @type {String}
@@ -704,6 +712,10 @@ this.createjs = this.createjs||{};
 	try {
 		Object.defineProperties(p, {
 			stage: { get: p.getStage },
+			cacheID: {
+				get: function(){ return this.bitmapCache && this.bitmapCache.cacheID },
+				set: function(a){ this.bitmapCache && (this.bitmapCache.cacheID = a) }
+			},
 			_cacheOffsetX: {
 				get: function(){ return this.bitmapCache && this.bitmapCache.x },
 				set: function(a){ this.bitmapCache && (this.bitmapCache.x = a) }
